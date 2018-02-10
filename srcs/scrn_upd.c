@@ -6,7 +6,7 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/06 20:43:29 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/09 17:23:44 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/02/10 14:42:49 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ static void	print_frct(void *mlx, void *win, t_img *img, t_frct *frct/**/)
 
 	double	re_factor;
 	double	im_factor;
-	size_t	max_iterations = 30;
 	
 	printf("frct->max_im: %Lf\n", frct->max_im);
 	printf("frct->min_im: %Lf\n", frct->min_im);
@@ -32,7 +31,6 @@ static void	print_frct(void *mlx, void *win, t_img *img, t_frct *frct/**/)
 	ft_putendl("____________________________________________");
 	re_factor = (frct->max_re - frct->min_re) / (IMG_WIDTH - 1);
 	im_factor = (frct->max_im - frct->min_im) / (IMG_HEIGHT - 1);
-	max_iterations = 50;
 	ft_bzero(img->arr, IMG_HEIGHT * img->size_line);
 
 	double	c_im;
@@ -60,7 +58,7 @@ static void	print_frct(void *mlx, void *win, t_img *img, t_frct *frct/**/)
 			is_inside = 1;
 			//printf("y: %zu\tx: %zu\t c_im:%f\t, c_re%f\t\n", y, x, c_im, c_re);
 			n = 0;
-			while(n < max_iterations)
+			while(n < frct->max_iterations)
 			{
 				z_re2 = z_re * z_re;
 			   	z_im2 = z_im * z_im;
@@ -73,7 +71,7 @@ static void	print_frct(void *mlx, void *win, t_img *img, t_frct *frct/**/)
 				z_re = z_re2 - z_im2 + c_re;
 				n++;
 			}
-			if (n < max_iterations)
+			if (n < frct->max_iterations)
 			{
 				clr.c_8[B] = (n * 6) % 255;
 				SET_PIX(x, y, img, clr.c_32);

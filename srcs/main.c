@@ -6,10 +6,11 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 13:32:09 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/09 19:32:46 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/02/10 16:49:12 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "stdio.h"
 #include "fractol.h"
 
 void	toggle_show_help(t_frct *frct)
@@ -61,10 +62,11 @@ void	init_frct(t_frct *frct)
 	frct->max_re = 1.0;
 	frct->min_im = -1.2;
 	frct->max_im =  frct->min_im + (frct->max_re - frct->min_re) * IMG_HEIGHT / IMG_WIDTH;
-	frct->zoom_re_val = 1.5 ;
-	frct->zoom_im_val = 1.5;
+	frct->zoom_re_val = 0.9 ;
+	frct->zoom_im_val = 0.9;
 	frct->mov_re_val = 0.05;
 	frct->mov_im_val = 0.05;
+	frct->max_iterations = 10;
 	
 	printf("zoom_re_val:%Lf\n", frct->zoom_re_val);
 	printf("zoom_im_val:%Lf\n", frct->zoom_im_val);
@@ -81,19 +83,44 @@ int		get_coordinates(int x, int y, t_frct *frct)
 }
 
 
-double	interpolate(double strart, double end, double interpolation)
+double	interpolate(double start, double end, double interpolation)
 {
 	return (start + ((end - start) * interpolation));
 }
 
-int		mouse_zoom(int x, int y, t_frct *frct)
+
+void apply_zoom(t_frct *frct, double mouse_re, double mouse_im, double zoomFactor)
 {
-	double mouseRe;
-	double mouseIm;
+     double interpolation = 1.0 / zoomFactor;
+	 (void)interpolation;
+     frct->min_re = interpolate(mouse_re, frct->min_re, interpolation);
+     frct->min_im = interpolate(mouse_im, frct->min_im, interpolation);
+     frct->max_re = interpolate(mouse_re, frct->max_re, interpolation);
+     frct->max_im = interpolate(mouse_im, frct->max_im, interpolation);
+}
+
+
+
+int		mouse_zoom(int key, int x, int y, t_frct *frct)
+{
+	double mouse_re;
+	double mouse_im;
 
 	printf("x: %d\t\t y: %d\n", x, y);
-	mouseRe = (double)x / (IMG_WIDTH / (frct->re_max - frct->re_min)) + frct->re_min;
-	mouseIm = (double)y / (IMG_HEIGHT / (frct->im_max - frct->im_min)) + frct->im_min;
+	printf("key: %d\t\t \n", key);
+	mouse_re = (double)x / (IMG_WIDTH /
+		(frct->max_im - frct->min_re)) + frct->min_re;
+	mouse_im = (double)y / (IMG_HEIGHT /
+			(frct->max_im - frct->min_im)) + frct->min_im;
+	if (key == 1 || key == 4)
+	{
+		apply_zoom(frct, mouse_re ,mouse_im, 1.05);
+	}
+	else if (key == 2 || key == 5)
+	{
+		apply_zoom(frct, mouse_re ,mouse_im, 0.995);
+	}
+	scrn_upd(frct);
 	return (0);
 }
 
@@ -102,7 +129,7 @@ int		main(int argc, char **argv)
 {
 	t_frct	frct;
 
-	if (argc == 1)
+	if (argc > 1)
 	{
 		(void)argv;
 		if (!(frct.mlx = mlx_init()))
@@ -114,9 +141,9 @@ int		main(int argc, char **argv)
 		scrn_upd(&frct);
 		mlx_hook(frct.win, 2, 0, handle_key, &frct);
 		mlx_hook(frct.win, 17, 0, (int (*)(void *))exit_frct, &frct);
-		mlx_hook(frct.win, 4, 0, mouse_zoom ,frct);
+		mlx_hook(frct.win, 4, 0, mouse_zoom ,&frct);
 	//	mlx_hook(frct.win, 5, 0,       ,frct);
-		mlx_hook(frct.win, 6, 0, get_coordinates ,&frct);
+	//	mlx_hook(frct.win, 6, 0, get_coordinates ,&frct);
 		mlx_loop(frct.mlx);
 	}
 	ft_putendl_fd("Usage : ./frct <filename>", 2);

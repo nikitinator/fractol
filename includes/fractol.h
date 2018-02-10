@@ -1,7 +1,6 @@
 #ifndef FRACTOL_H
 # define FRACTOL_H
 
-# include <stdio.h>
 # include <stdlib.h>
 # include <fcntl.h>
 # include <unistd.h>
@@ -9,7 +8,9 @@
 # include "mlx.h"
 # include "libft.h"
 
-# define XY_COORD_MUL 10
+# include <sys/types.h>
+
+# include "pthread.h"
 
 # define X 0
 # define Y 1
@@ -84,6 +85,7 @@ typedef struct		s_frct
 	int				show_help;
 	int				mouse_x;
 	int				mouse_y;
+	size_t			max_iterations;
 	long double		max_re;
 	long double		min_re;
 	long double		max_im;

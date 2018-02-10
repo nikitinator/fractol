@@ -6,7 +6,7 @@
 #    By: snikitin <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/07 17:36:11 by snikitin          #+#    #+#              #
-#    Updated: 2018/02/09 17:01:34 by snikitin         ###   ########.fr        #
+#    Updated: 2018/02/10 15:52:17 by snikitin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,7 +37,7 @@ MLX_DIR = $(LIB_DIR)mlx/
 MLX_INC = $(LIB_DIR)mlx/
 MLX_FLAGS = -lmlx -L $(MLX_INC) -framework OpenGl -framework AppKit
 
-CC_FLAGS := -Wall -Wextra -Werror -O3
+CC_FLAGS := -Wall -Wextra -Werror -O3 -pthread
 LINK_FLAGS := $(LIBFT_FLAGS) $(MLX_FLAGS)
 HEADER_FLAGS := -I $(LIBFT_INC) -I $(MLX_DIR) -I $(INC_DIR)
 
