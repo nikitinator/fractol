@@ -6,7 +6,7 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 13:32:09 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/15 21:52:35 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/02/15 18:02:00 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ void	init_frct(t_frct *frct)
 	frct->zoom_im_val = 0.95;
 	frct->mov_re_val = 0.05;
 	frct->mov_im_val = 0.05;
-	frct->max_iterations = 100;
+	frct->max_iterations = 30;
 	
 	set_milestones(frct);
 
@@ -127,62 +127,64 @@ int		mouse_zoom(int key, int x, int y, t_frct *frct)
 {
 	double mouse_re;
 	double mouse_im;
-	double ratio_im;
-	double ratio_re;
-	double range_re;
-	double range_im;
 
+	double temp_im;
+	double temp_re;
 	printf("x: %d\t\t y: %d\n", x, y);
 //	printf("key: %d\t\t \n", key);
 	mouse_re = (double)x / (IMG_WIDTH /
-		(frct->max_re - frct->min_re)) + frct->min_re;
+		(frct->max_im - frct->min_re)) + frct->min_re;
 	mouse_im = (double)y / (IMG_HEIGHT /
 			(frct->max_im - frct->min_im)) + frct->min_im;
-	
-	ratio_re = 1.0 / IMG_WIDTH  * (float)x;	
-	ratio_im = 1.0 / IMG_HEIGHT * (float)y;  	
+	temp_im = 1.0 / IMG_WIDTH  * (float)x; 
+	temp_re = 1.0 / IMG_HEIGHT * (float)y;  
 
+	printf("temp_im: %f\n",temp_im);
+	printf("temp_re: %f\n",temp_re);
 	printf("mouse_im: %f\n",mouse_im);
 	printf("mouse_re: %f\n",mouse_re);
 
-	printf("1 ratio_im: %f\n",ratio_im);
-	printf("1 ratio_re: %f\n",ratio_re);
+	(void)key;
 
-	range_re = (frct->max_re - frct->min_re);
-	range_im = (frct->max_im - frct->min_im);
-	//ratio_im = 1.0 / range_im  * mouse_im;	
-	//ratio_re = 1.0 / range_re * mouse_re;  	
-	//printf("2 ratio_im: %f\n", ratio_im);
-	//printf("2 ratio_re: %f\n", ratio_re);
-	printf("range_im: %f\n",range_im);
-	printf("range_re: %f\n",range_re);
-	//zoom_in_key(frct);
+	double range_re = (frct->max_re - frct->min_re);
+	double range_im = (frct->max_im - frct->min_im);
 
-	if (key == 1 || key == 4)
-	{
 		//zoom_in_key(frct);
-		range_re *= 0.95; 
-		range_im *= 0.95; 
-		
-	}
-	else if (key == 2 || key == 5)
-	{
-		//zoom_out_key(frct);
-		range_re *= 1.05;
-		range_im *= 1.05;
-	}
-
-	frct->min_re = mouse_re - range_re * ratio_re;
-	frct->max_re = mouse_re + range_re * (1 - ratio_re);
-	frct->min_im = mouse_im - range_im * ratio_im;
-	frct->max_im = mouse_im + range_im * (1 - ratio_im);
-	//frct->min_im = mouse_im - range_im * ratio_im;
-	//frct->max_im = mouse_im + range_im * (1 - ratio_im);
-
-	printf("frct->min_re:%Lf\n", frct->min_re);
-	printf("frct->max_re:%Lf\n", frct->max_re);
-	printf("frct->min_im:%Lf\n", frct->min_im);
-	printf("frct->max_im:%Lf\n", frct->max_im);
+	range_re *= 2; 
+	range_im *= 2;
+	frct->min_re = mouse_re - range_re * temp_re;
+	frct->max_re = mouse_re + range_re * (1 - temp_re);
+	frct->min_im = mouse_im - range_im * temp_im;
+	frct->max_im = mouse_im + range_im * (1 - temp_im);
+	
+//	if (key == 1 || key == 4)
+//	{
+//		//zoom_in_key(frct);
+//		range_re *= 0.95; 
+//	}
+//	else if (key == 2 || key == 5)
+//	{
+//		//zoom_out_key(frct);
+//		range_re *= 1.05;
+//	}
+//
+//	printf("frct->min_re:%Lf\n", frct->min_re);
+//	printf("frct->max_re:%Lf\n", frct->max_re);
+//	printf("frct->min_im:%Lf\n", frct->min_im);
+//	printf("frct->max_im:%Lf\n", frct->max_im);
+//	
+//	printf("range_im: %f\n",range_im);
+//	printf("range_re: %f\n",range_re);
+//	frct->min_re = mouse_re - range_re * temp_re;
+//	frct->max_re = mouse_re + range_re * (1 - temp_re);
+//	frct->min_im = mouse_im - range_im * temp_im;
+//	frct->max_im = mouse_im + range_im * (1 - temp_im);
+//	ft_putendl("__");
+//	printf("frct->min_re:%Lf\n", frct->min_re);
+//	printf("frct->max_re:%Lf\n", frct->max_re); 
+//	printf("frct->min_im:%Lf\n", frct->min_im); 
+//   printf("frct->max_im:%Lf\n", frct->max_im);
+//	ft_putendl("__");
 	scrn_upd(frct);
 	ft_putendl("");
 	return (0);

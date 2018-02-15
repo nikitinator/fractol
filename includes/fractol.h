@@ -12,6 +12,8 @@
 
 # include "pthread.h"
 
+# define THREADS 200 
+
 # define X 0
 # define Y 1
 # define Z 2
@@ -90,12 +92,20 @@ typedef struct		s_frct
 	long double		min_re;
 	long double		max_im;
 	long double		min_im;
-	long double			zoom_re_val;
-	long double			zoom_im_val;
-	long double			mov_re_val;
-	long double			mov_im_val;
 
+	long double		im_factor;
+	long double		re_factor;
+
+	long double		zoom_re_val;
+	long double		zoom_im_val;
+	long double		mov_re_val;
+	long double		mov_im_val;
+	int				thread;
+	pthread_cond_t	th_cond;
+	size_t			milestones[THREADS + 1];
 }					t_frct;
+
+
 
 typedef struct		s_func_key_hook
 {
