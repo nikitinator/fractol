@@ -12,7 +12,7 @@
 
 # include "pthread.h"
 
-# define THREADS 200 
+# define THREADS 16 
 
 # define X 0
 # define Y 1
@@ -21,6 +21,7 @@
 
 # define PXL_CLR 2
 
+# define T 3
 # define R 2
 # define G 1
 # define B 0
@@ -51,7 +52,8 @@
 # define BUT_ESC 53
 # define BUT_R 15
 # define BUT_F1 122
-
+# define BUT_BIGG 47
+# define BUT_LESS 43
 # define WHITE 0x00FFFFFF
 
 //# define CHK_PIX(x, y) if((0 <= x && x< IMG_WIDTH) && (0 <= y && y<IMG_HEIGHT))
@@ -78,6 +80,21 @@ typedef struct		s_img
 	char			*arr;
 }					t_img;
 
+typedef struct		s_fract_data
+{
+	char			*name;
+	long double		*max_im;
+	long double		*min_im;
+	long double		*max_re;
+	long double		*mix_im;
+}					t_fractal;
+
+typedef struct		s_cmplx
+{
+	long double		im;
+	long double		re;
+}					t_cmplx;
+
 typedef struct		s_frct
 {
 	int				fd;
@@ -85,22 +102,18 @@ typedef struct		s_frct
 	void			*win;
 	t_img			img;
 	int				show_help;
-	int				mouse_x;
-	int				mouse_y;
 	size_t			max_iterations;
-	long double		max_re;
-	long double		min_re;
-	long double		max_im;
-	long double		min_im;
+	t_cmplx			max;
+	t_cmplx			min;
+	t_cmplx			range;
+	t_cmplx			mov_coeff;
+	long double		zoom_coeff;
 
-	long double		im_factor;
-	long double		re_factor;
-
-	long double		zoom_re_val;
-	long double		zoom_im_val;
-	long double		mov_re_val;
-	long double		mov_im_val;
+	long double		im_factor;// mojno ubrat'
+	long double		re_factor;//
 	int				thread;
+	void			(*f)();//
+
 	pthread_cond_t	th_cond;
 	size_t			milestones[THREADS + 1];
 }					t_frct;
@@ -121,6 +134,8 @@ void	mov_right_key(t_frct *frct);
 void	zoom_in_key(t_frct *frct);
 void	zoom_out_key(t_frct *frct);
 
+void				toggle_show_help(t_frct *frct);
+
 void				change_clr_val(t_pixel *p, int clr, int val);
 void				add_red(t_frct *frct);
 void				add_grn(t_frct *frct);
@@ -129,6 +144,9 @@ void				sub_red(t_frct *frct);
 void				sub_grn(t_frct *frct);
 void				sub_blu(t_frct *frct);
 void				reset_color(t_frct *frct);
+
+void				incr_iteration_num(t_frct *frct);
+void				decr_iteration_num(t_frct *frct);
 
 void				apply_on_pntarr(t_frct *frct, double n,
 		void (f)(t_point *, double));

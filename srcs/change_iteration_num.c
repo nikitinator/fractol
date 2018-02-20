@@ -1,37 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mov_key.c                                          :+:      :+:    :+:   */
+/*   change_iteration_num.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/02/09 16:56:14 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/20 20:18:10 by snikitin         ###   ########.fr       */
+/*   Created: 2018/02/20 17:17:03 by snikitin          #+#    #+#             */
+/*   Updated: 2018/02/20 17:32:57 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 
-void	mov_up_key(t_frct *frct)
+void	incr_iteration_num(t_frct *frct)
 {
-	frct->min.im -= frct->mov_coeff.im;
-	frct->max.im -= frct->mov_coeff.im;
+	frct->max_iterations += 2;
+	ft_putendl("test");
 }
 
-void	mov_down_key(t_frct *frct)
-{
-	frct->min.im += frct->mov_coeff.im;
-	frct->max.im += frct->mov_coeff.im;
-}
 
-void	mov_left_key(t_frct *frct)
+void	decr_iteration_num(t_frct *frct)
 {
-	frct->min.re -= frct->mov_coeff.re;
-	frct->max.re -= frct->mov_coeff.re;
-}
-
-void	mov_right_key(t_frct *frct)
-{
-	frct->min.re += frct->mov_coeff.re;
-	frct->max.re += frct->mov_coeff.re;
+	if (frct->max_iterations != 0)
+		frct->max_iterations -= 2;
 }

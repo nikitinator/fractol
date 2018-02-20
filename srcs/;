@@ -6,7 +6,7 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/09 16:54:03 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/20 20:40:38 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/02/20 20:32:49 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,8 @@ void	zoom_in_key(t_frct *frct)
 	center.im = frct->range.im / 2 + frct->min.im;	
 	frct->range.re *= (1 - frct->zoom_coeff); 
 	frct->range.im *= (1 - frct->zoom_coeff); 
-	//frct->mov_coeff.im *= (1 - frct->zoom_coeff); 
-	//frct->mov_coeff.re *= (1 - frct->zoom_coeff); 
+	frct->mov_coeff.im *= (1 - frct->zoom_coeff); 
+	frct->mov_coeff.re *= (1 - frct->zoom_coeff); 
 	frct->min.re = center.re - frct->range.re / 2;
 	frct->max.re = center.re + frct->range.re / 2;
 	frct->min.im = center.im - frct->range.im / 2;
@@ -54,8 +54,8 @@ void	zoom_out_key(t_frct *frct)
 	center.im = frct->range.im / 2 + frct->min.im;	
 	frct->range.re *= (1 + frct->zoom_coeff); 
 	frct->range.im *= (1 + frct->zoom_coeff); 
-	//frct->mov_coeff.im *= frct->zoom_coeff; 
-	//frct->mov_coeff.re *= frct->zoom_coeff; 
+	frct->mov_coeff.im *= frct->zoom_coeff; 
+	frct->mov_coeff.re *= frct->zoom_coeff; 
 	frct->min.re = center.re - frct->range.re / 2;
 	frct->max.re = center.re + frct->range.re / 2;
 	frct->min.im = center.im - frct->range.im / 2;

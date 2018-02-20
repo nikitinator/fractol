@@ -6,7 +6,7 @@
 #    By: snikitin <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/07 17:36:11 by snikitin          #+#    #+#              #
-#    Updated: 2018/02/10 15:52:17 by snikitin         ###   ########.fr        #
+#    Updated: 2018/02/20 17:19:13 by snikitin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,9 @@ SRC :=	main.c\
 		scrn_upd.c\
 		exit_fractol.c\
 		zoom_key.c\
-		mov_key.c
+		mov_key.c\
+		toggle_show_help.c\
+		change_iteration_num.c
 
 OBJ = $(addprefix $(OBJ_DIR), $(SRC:.c=.o))
 
