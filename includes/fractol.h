@@ -102,7 +102,7 @@ typedef struct		s_frct
 	void			*win;
 	t_img			img;
 	int				show_help;
-	size_t			max_iterations;
+	int			max_iterations;
 	t_cmplx			max;
 	t_cmplx			min;
 	t_cmplx			range;

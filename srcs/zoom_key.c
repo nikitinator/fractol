@@ -6,7 +6,7 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/09 16:54:03 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/20 20:40:38 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/02/20 22:21:47 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@
 
 void	zoom_in_key(t_frct *frct)
 {
-
 	t_cmplx	center;
 	
 	center.re = frct->range.re / 2 + frct->min.re;	
@@ -47,7 +46,6 @@ void	zoom_in_key(t_frct *frct)
 
 void	zoom_out_key(t_frct *frct)
 {
-
 	t_cmplx	center;
 
 	center.re = frct->range.re / 2 + frct->min.re;	

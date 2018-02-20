@@ -6,7 +6,7 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/06 20:43:29 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/20 21:56:24 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/02/20 22:27:16 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,27 +15,52 @@
 
 
 //create small structure for this 
+static int	get_iterations_num(t_frct *frct, t_cmplx c)
+{
+	int	n;
+
+	t_cmplx z;
+	t_cmplx z2;
+
+	z.re = c.re;
+	z.im = c.im;
+	n = 0;
+	while(n < frct->max_iterations)
+	{
+		z2.re = z.re * z.re;
+		z2.im = z.im * z.im;
+		if (z2.re + z2.im > 4)
+			break;
+		z.im = 2 * z.re * z.im + c.im;
+		z.re = z2.re - z2.im + c.re;
+		n++;
+	}
+	return (n);
+}
+
+static void	colorize_pixel(t_frct *frct, int n, size_t x, size_t y)
+{
+	t_color clr;
+
+	clr.c_32 = 0;
+	clr.c_8[B] = (n * 6) % 255;
+	SET_PIX(x, y, (&frct->img), clr.c_32);
+}
+
 static void	*calc_mndlbrt(void *param/**/)
 {
 	t_frct *frct;
-	frct = (t_frct *)param;
-
-	frct->re_factor = (frct->max.re - frct->min.re) / (IMG_WIDTH - 1);
-	frct->im_factor = (frct->max.im - frct->min.im) / (IMG_HEIGHT - 1);
-
 	int		thread;
 	t_cmplx c;
-	t_cmplx z;
-	t_cmplx z2;
-	int		is_inside;
-	size_t	n;
 	size_t	x;
 	size_t	y;
-	t_color	clr;
+	int		n;
 
+	frct = (t_frct *)param;
+	frct->re_factor = (frct->max.re - frct->min.re) / (IMG_WIDTH - 1);//
+	frct->im_factor = (frct->max.im - frct->min.im) / (IMG_HEIGHT - 1);//
 	thread = frct->thread++;
 	pthread_cond_signal(&frct->th_cond);
-	clr.c_32 = 0;
 	y = frct->milestones[thread];
 	while (y < frct->milestones[thread + 1])
 	{
@@ -44,30 +69,9 @@ static void	*calc_mndlbrt(void *param/**/)
 		while (x < IMG_WIDTH)
 		{
 			c.re = frct->min.re + x * frct->re_factor;
-			z.re = c.re;
-			z.im = c.im;
-			is_inside = 1;
-			n = 0;
-			while(n < frct->max_iterations)
-			{
-				z2.re = z.re * z.re;
-			   	z2.im = z.im * z.im;
-				if (z2.re + z2.im > 4)
-				{
-					is_inside = 0;
-					break;
-				}
-				z.im = 2 * z.re * z.im + 0.11;//c.im;
-				z.re = z2.re - z2.im + -0.66; //c.re;
-				n++;
-			}
+			n = get_iterations_num(frct, c);
 			if (n < frct->max_iterations)
-			{
-				clr.c_8[B] = (n * 6) % 255;
-				SET_PIX(x, y, (&frct->img), clr.c_32);
-			}			
-		//	if (is_inside)
-		//		SET_PIX(x,y, (&frct->img), WHITE);
+				colorize_pixel(frct, n, x, y);
 			x++;
 		}
 		y++;

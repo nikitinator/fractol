@@ -6,12 +6,28 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 13:32:09 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/20 20:33:29 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/02/20 22:28:06 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "stdio.h"
 #include "fractol.h"
+
+//void	change_color_palette(t_frct *frct)
+//{
+//	static t_func_key_hook	func[9] = {
+//		{BUT_ESC, exit_frct},
+//		{BUT_UP, mov_up_key},
+//		{BUT_DOWN, mov_down_key},
+//		{BUT_RIGHT, mov_right_key},
+//		{BUT_LEFT, mov_left_key},
+//		{BUT_PLU, zoom_in_key}, 
+//		{BUT_MIN, zoom_out_key},
+//		{BUT_BIGG, incr_iteration_num},
+//		{BUT_LESS, decr_iteration_num}
+//		};
+//
+//}
 
 int		handle_key(int keycode, t_frct *frct)
 {
