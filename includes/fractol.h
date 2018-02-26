@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   fractol.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/02/26 18:22:38 by snikitin          #+#    #+#             */
+/*   Updated: 2018/02/26 19:18:44 by snikitin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef FRACTOL_H
 # define FRACTOL_H
 
@@ -26,8 +38,17 @@
 # define G 1
 # define B 0
 
-# define IMG_WIDTH 1600
-# define IMG_HEIGHT 1200
+//# define IMG_WIDTH 1600
+# define IMG_WIDTH 1000
+# define IMG_HEIGHT 800
+
+# define ZOOM_COEFF 25 
+# define NUM_OF_BTNS 10
+
+# define DFLT_MAX_RE  1.2
+# define DFLT_MIN_RE -1.2
+# define DFLT_MAX_IM  1.0	
+# define DFLT_MIN_IM -1.0
 
 # define BUT_8 91
 # define BUT_4 86
@@ -54,6 +75,8 @@
 # define BUT_F1 122
 # define BUT_BIGG 47
 # define BUT_LESS 43
+# define BUT_SPACE 49
+
 # define WHITE 0x00FFFFFF
 
 //# define CHK_PIX(x, y) if((0 <= x && x< IMG_WIDTH) && (0 <= y && y<IMG_HEIGHT))
@@ -80,20 +103,18 @@ typedef struct		s_img
 	char			*arr;
 }					t_img;
 
-typedef struct		s_fract_data
-{
-	char			*name;
-	long double		*max_im;
-	long double		*min_im;
-	long double		*max_re;
-	long double		*mix_im;
-}					t_fractal;
-
 typedef struct		s_cmplx
 {
 	long double		im;
 	long double		re;
 }					t_cmplx;
+
+typedef struct		s_frct_data
+{
+	int				index;	
+	char			*name;
+	void			(*iter)(t_cmplx *z, t_cmplx z2, t_cmplx to_add);//
+}					t_frct_data;
 
 typedef struct		s_frct
 {
@@ -101,18 +122,23 @@ typedef struct		s_frct
 	void			*mlx;
 	void			*win;
 	t_img			img;
+	
 	int				show_help;
-	int			max_iterations;
+	int				space_pressed;
+
+	int				max_iterations;
 	t_cmplx			max;
 	t_cmplx			min;
 	t_cmplx			range;
 	t_cmplx			mov_coeff;
+	t_cmplx			julia_const;
 	long double		zoom_coeff;
+	void			(*iter)(t_cmplx *z, t_cmplx z2, t_cmplx to_add);//
+	int				(*get_iter)(struct s_frct *frct, t_cmplx c);//
+	int				(*get_pxl_clr)(int max_iterations, int n);//
 
-	long double		im_factor;// mojno ubrat'
-	long double		re_factor;//
+	t_cmplx			factor;//
 	int				thread;
-	void			(*f)();//
 
 	pthread_cond_t	th_cond;
 	size_t			milestones[THREADS + 1];
@@ -127,14 +153,19 @@ typedef struct		s_func_key_hook
 }					t_func_key_hook;
 
 
-void	mov_up_key(t_frct *frct);
-void	mov_down_key(t_frct *frct);
-void	mov_left_key(t_frct *frct);
-void	mov_right_key(t_frct *frct);
-void	zoom_in_key(t_frct *frct);
-void	zoom_out_key(t_frct *frct);
+int					get_itr_mandelbrot(t_frct *frct, t_cmplx c);
+int					get_itr_julia(t_frct *frct, t_cmplx c);
+int					get_pxl_clr_1(int max_iterations, int n);
+
+void				mov_up_key(t_frct *frct);
+void				mov_down_key(t_frct *frct);
+void				mov_left_key(t_frct *frct);
+void				mov_right_key(t_frct *frct);
+void				zoom_in_key(t_frct *frct);
+void				zoom_out_key(t_frct *frct);
 
 void				toggle_show_help(t_frct *frct);
+void				toggle_space(t_frct *frct);
 
 void				change_clr_val(t_pixel *p, int clr, int val);
 void				add_red(t_frct *frct);
@@ -155,5 +186,22 @@ void				apply_on_pxlarr(t_frct *frct, int clr, int val,
 
 void				exit_frct(t_frct *frct);
 void				scrn_upd(t_frct *frct);
+
+t_frct_data			*get_frct_data();
+int					validate_params(int argc, char **argv);
+
+void				iterate_mandelbar(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
+void				iterate_mandelbrot(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
+void				iterate_julia(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
+void				iterate_perp_brot(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
+void				iterate_celtic_brot(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
+void				iterate_celtic_bar(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
+void				iterate_perp_celtic(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
+void				iterate_burn_ship(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
+void				iterate_heart_brot(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
+void				iterate_perp_burn_ship(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
+void				iterate_buffalo(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
+void				iterate_celt_heart(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
+void				iterate_perp_buffalo(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
 
 #endif

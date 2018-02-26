@@ -6,7 +6,7 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 13:32:09 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/20 22:28:06 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/02/26 19:18:10 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 int		handle_key(int keycode, t_frct *frct)
 {
 	int						i;
-	static t_func_key_hook	func[9] = {
+	static t_func_key_hook	func[NUM_OF_BTNS] = {
 		{BUT_ESC, exit_frct},
 		{BUT_UP, mov_up_key},
 		{BUT_DOWN, mov_down_key},
@@ -41,13 +41,14 @@ int		handle_key(int keycode, t_frct *frct)
 		{BUT_PLU, zoom_in_key}, 
 		{BUT_MIN, zoom_out_key},
 		{BUT_BIGG, incr_iteration_num},
-		{BUT_LESS, decr_iteration_num}
+		{BUT_LESS, decr_iteration_num},
+		{BUT_SPACE, toggle_space}
 		};
 
 	i = 0;
-	while (i < 9 && func[i].key != keycode)
+	while (i < NUM_OF_BTNS && func[i].key != keycode)
 		i++;
-	if (i < 9)
+	if (i < NUM_OF_BTNS)
 		func[i].f(frct);
 	scrn_upd(frct);
 	return (0);
@@ -77,22 +78,36 @@ void		set_milestones(t_frct *frct)
 	}
 }
 
-
 void	init_frct(t_frct *frct)
 {
 	init_frct_img(&frct->img, frct->mlx);
 	frct->show_help = 0;
-	frct->min.re = -2.0;//-2.0;
-	frct->max.re = 	2.0; // 1.0;
-	frct->min.im =  -2.0;//-1.2;
-	frct->max.im =  2.0;// 1.2;//ct->min.im + (frct->max.re - frct->min.re) * IMG_HEIGHT / IMG_WIDTH;
+	frct->min.re = DFLT_MIN_RE;
+	frct->max.re = DFLT_MAX_RE;
+	frct->min.im = DFLT_MAX_IM; 
+	frct->max.im = DFLT_MIN_IM; 
 	frct->range.im = frct->max.im - frct->min.im;
 	frct->range.re = frct->max.re - frct->min.re; 
-	frct->zoom_coeff = 0.05 ;
+	frct->zoom_coeff = 0.1 ;
 	frct->mov_coeff.im = frct->range.im / 80;
 	frct->mov_coeff.re = frct->range.re / 80;
-	frct->max_iterations = 50;	
+	frct->max_iterations = 100;	
+	frct->iter = iterate_mandelbrot;
+	frct->get_iter = get_itr_mandelbrot;
+	frct->get_pxl_clr = get_pxl_clr_1;
 	set_milestones(frct);
+}
+
+t_cmplx	get_cmplx(t_frct *frct, int x, int y)
+{
+	t_cmplx	coord;
+
+	coord.re = (double)x / (IMG_WIDTH /
+		(frct->max.re - frct->min.re)) + frct->min.re;
+	coord.im = (double)y / (IMG_HEIGHT /
+			(frct->max.im - frct->min.im)) + frct->min.im;
+	return (coord);
+
 }
 
 int		mouse_zoom(int key, int x, int y, t_frct *frct)
@@ -100,35 +115,29 @@ int		mouse_zoom(int key, int x, int y, t_frct *frct)
 	t_cmplx	mouse;
 	t_cmplx	ratio;
 
-	printf("x: %d\t\t y: %d\n", x, y);
-	mouse.re = (double)x / (IMG_WIDTH /
-		(frct->max.re - frct->min.re)) + frct->min.re;
-	mouse.im = (double)y / (IMG_HEIGHT /
-			(frct->max.im - frct->min.im)) + frct->min.im;
-	
+	//printf("x: %d\t\t y: %d\n", x, y);
+	//printf("key: %d\t\t \n", key);
+	mouse = get_cmplx(frct, x, y);	
 	ratio.re = 1.0 / IMG_WIDTH  * (float)x;	
 	ratio.im = 1.0 / IMG_HEIGHT * (float)y;  	
 
-	printf("mouse_im: %Lf\n",mouse.im);
-	printf("mouse_re: %Lf\n",mouse.re);
+	//printf("mouse_im: %Lf\n",mouse.im);
+	//printf("mouse_re: %Lf\n",mouse.re);
 
-	printf("1 ratio_im: %Lf\n",ratio.im);
-	printf("1 ratio_re: %Lf\n",ratio.re);
+	//printf("1 ratio_im: %Lf\n",ratio.im);
+	//printf("1 ratio_re: %Lf\n",ratio.re);
 
-	printf("range.im: %Lf\n", frct->range.im);
-	printf("range.re: %Lf\n", frct->range.re);
-	//zoom_in_key(frct);
+	//printf("range.im: %Lf\n", frct->range.im);
+	//printf("range.re: %Lf\n", frct->range.re);
 
 	if (key == 1 || key == 4)
 	{
-		//zoom_in_key(frct);
 		frct->range.re *= (1 - frct->zoom_coeff);
 		frct->range.im *= (1 - frct->zoom_coeff);
 		
 	}
 	else if (key == 2 || key == 5)
 	{
-		//zoom_out_key(frct);
 		frct->range.re *= (1 + frct->zoom_coeff);
 		frct->range.im *= (1 + frct->zoom_coeff);
 	}
@@ -138,20 +147,30 @@ int		mouse_zoom(int key, int x, int y, t_frct *frct)
 	frct->min.im = mouse.im - frct->range.im * ratio.im;
 	frct->max.im = mouse.im + frct->range.im * (1 - ratio.im);
 
-	printf("frct->min.re:%Lf\n", frct->min.re);
-	printf("frct->max.re:%Lf\n", frct->max.re);
-	printf("frct->min.im:%Lf\n", frct->min.im);
-	printf("frct->max.im:%Lf\n", frct->max.im);
+	//printf("frct->min.re:%Lf\n", frct->min.re);
+	//printf("frct->max.re:%Lf\n", frct->max.re);
+	//printf("frct->min.im:%Lf\n", frct->min.im);
+	//printf("frct->max.im:%Lf\n", frct->max.im);
 	scrn_upd(frct);
 	ft_putendl("");
 	return (0);
 }
 
+int		trace_mouse(int x, int y, t_frct *frct)
+{
+	if (frct->space_pressed)
+	{
+		frct->julia_const = get_cmplx(frct, x, y);
+		scrn_upd(frct);
+	}
+	return (0);
+}	
+
 int		main(int argc, char **argv)
 {
 	t_frct	frct;
 
-	if (argc > 1)
+	if (argc > 1 && !validate_params(argc, argv))
 	{
 		(void)argv;
 		if (!(frct.mlx = mlx_init()))
@@ -165,7 +184,7 @@ int		main(int argc, char **argv)
 		mlx_hook(frct.win, 17, 0, (int (*)(void *))exit_frct, &frct);
 		mlx_hook(frct.win, 4, 0, mouse_zoom ,&frct);
 	//	mlx_hook(frct.win, 5, 0,       ,frct);
-	//	mlx_hook(frct.win, 6, 0, get_coordinates ,&frct);
+		mlx_hook(frct.win, 6, 0, trace_mouse, &frct);
 		mlx_loop(frct.mlx);
 	}
 	ft_putendl_fd("Usage : ./frct <filename>", 2);

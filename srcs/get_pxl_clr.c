@@ -1,29 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   toggle_show_help.c                                 :+:      :+:    :+:   */
+/*   get_pxl_clr.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/02/20 13:23:38 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/22 20:25:14 by snikitin         ###   ########.fr       */
+/*   Created: 2018/02/26 18:33:14 by snikitin          #+#    #+#             */
+/*   Updated: 2018/02/26 18:50:10 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+#include  <fractol.h>
 
-void	toggle_show_help(t_frct *frct)
+int		get_pxl_clr_1(int max_iterations, int n)
 {
-	if (frct->show_help)
-		frct->show_help = 0;
-	else
-		frct->show_help = 1;
-}
+	t_color clr;
+	double	t ;
 
-void	toggle_space(t_frct *frct)
-{
-	if (frct->space_pressed)
-		frct->space_pressed= 0;
-	else
-		frct->space_pressed = 1;
+	t = (double)n/(double)max_iterations;
+	clr.c_32 = 0;
+	clr.c_8[R] = (int)(9*(1-t)*t*t*t*255);
+	clr.c_8[G] = (int)(15*(1-t)*(1-t)*t*t*255);
+	clr.c_8[B] = (int)(8.5*(1-t)*(1-t)*(1-t)*t*255);	
+	return (clr.c_32);
 }

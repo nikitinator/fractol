@@ -6,7 +6,7 @@
 #    By: snikitin <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/07 17:36:11 by snikitin          #+#    #+#              #
-#    Updated: 2018/02/20 17:19:13 by snikitin         ###   ########.fr        #
+#    Updated: 2018/02/26 18:35:41 by snikitin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,11 @@ SRC :=	main.c\
 		zoom_key.c\
 		mov_key.c\
 		toggle_show_help.c\
-		change_iteration_num.c
+		change_iteration_num.c\
+		iterate.c\
+		validate_params.c\
+		get_iter.c\
+		get_pxl_clr.c
 
 OBJ = $(addprefix $(OBJ_DIR), $(SRC:.c=.o))
 
