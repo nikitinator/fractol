@@ -6,11 +6,11 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 18:29:29 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/26 19:12:41 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/02/27 17:36:37 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fractol.h>
+#include "fractol.h"
 
 //senya will be dissapointed
 
@@ -36,13 +36,17 @@ int		get_itr_mandelbrot(t_frct *frct, t_cmplx c)
 	return (n);
 }
 
+#include <stdio.h>
+
 int		get_itr_julia(t_frct *frct, t_cmplx c)
 {
 	int	n;
 
 	t_cmplx z;
 	t_cmplx z2;
+	t_cmplx jul_const;
 
+	jul_const = frct->julia_const;
 	z.re = c.re;
 	z.im = c.im;
 	n = 0;
@@ -53,7 +57,7 @@ int		get_itr_julia(t_frct *frct, t_cmplx c)
 		if (z2.re + z2.im > 4)
 			break;
 				n++;
-		frct->iter(&z, z2, frct->julia_const);
+		(*frct->iter)(&z, z2, jul_const);
 	}
 	return (n);
 }

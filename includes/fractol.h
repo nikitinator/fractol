@@ -6,7 +6,7 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 18:22:38 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/26 19:18:44 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/02/28 21:52:37 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,29 +21,28 @@
 # include "libft.h"
 
 # include <sys/types.h>
+# include <pthread.h>
 
-# include "pthread.h"
-
-# define THREADS 16 
+# define THREAD_NUM 4 
 
 # define X 0
 # define Y 1
 # define Z 2
-# define PNT_CLR 3
-
-# define PXL_CLR 2
 
 # define T 3
 # define R 2
 # define G 1
 # define B 0
 
-//# define IMG_WIDTH 1600
+# define FROM 0
+# define TO 1
+
 # define IMG_WIDTH 1000
 # define IMG_HEIGHT 800
 
 # define ZOOM_COEFF 25 
-# define NUM_OF_BTNS 10
+# define NUM_OF_BTNS 11
+# define NUM_OF_VARIATIONS 12
 
 # define DFLT_MAX_RE  1.2
 # define DFLT_MIN_RE -1.2
@@ -79,7 +78,6 @@
 
 # define WHITE 0x00FFFFFF
 
-//# define CHK_PIX(x, y) if((0 <= x && x< IMG_WIDTH) && (0 <= y && y<IMG_HEIGHT))
 # define SET_PIX(x, y, i, c) *(int *)(i->arr+(x*i->by_pp+i->size_line*y)) = c
 
 typedef double		t_point[4];
@@ -89,7 +87,7 @@ typedef float		t_matr3[9];
 typedef union		u_color
 {
 	unsigned int	c_32;
-	unsigned char	c_8[3];
+	unsigned char	c_8[4];
 }					t_color;
 
 typedef struct		s_img
@@ -109,12 +107,12 @@ typedef struct		s_cmplx
 	long double		re;
 }					t_cmplx;
 
-typedef struct		s_frct_data
+typedef struct		s_frct_itr_data
 {
 	int				index;	
 	char			*name;
 	void			(*iter)(t_cmplx *z, t_cmplx z2, t_cmplx to_add);//
-}					t_frct_data;
+}					t_frct_itr_data;
 
 typedef struct		s_frct
 {
@@ -141,10 +139,7 @@ typedef struct		s_frct
 	int				thread;
 
 	pthread_cond_t	th_cond;
-	size_t			milestones[THREADS + 1];
 }					t_frct;
-
-
 
 typedef struct		s_func_key_hook
 {
@@ -152,46 +147,37 @@ typedef struct		s_func_key_hook
 	void			(*f)(t_frct *frct);
 }					t_func_key_hook;
 
+typedef struct		s_thrd_inp
+{
+	t_frct			*frct;
+	int				borders[2];
+}					t_thrd_inp;
 
+void				init_frct(t_frct *frct, int	index_frct, int index_iter);
+int					validate_params(int argc, char **argv);
+void				scrn_upd(t_frct *frct);
+void				print_usage(void);
+
+t_frct_itr_data		*get_frct_itr_data(void);
+
+/*
+** Catching events.
+*/
+int					mouse_trace(int x, int y, t_frct *frct);
+int					mouse_zoom(int key, int x, int y, t_frct *frct);
+int					handle_key(int keycode, t_frct *frct);
+
+/*
+ * Fractal types
+*/
 int					get_itr_mandelbrot(t_frct *frct, t_cmplx c);
 int					get_itr_julia(t_frct *frct, t_cmplx c);
-int					get_pxl_clr_1(int max_iterations, int n);
 
-void				mov_up_key(t_frct *frct);
-void				mov_down_key(t_frct *frct);
-void				mov_left_key(t_frct *frct);
-void				mov_right_key(t_frct *frct);
-void				zoom_in_key(t_frct *frct);
-void				zoom_out_key(t_frct *frct);
-
-void				toggle_show_help(t_frct *frct);
-void				toggle_space(t_frct *frct);
-
-void				change_clr_val(t_pixel *p, int clr, int val);
-void				add_red(t_frct *frct);
-void				add_grn(t_frct *frct);
-void				add_blu(t_frct *frct);
-void				sub_red(t_frct *frct);
-void				sub_grn(t_frct *frct);
-void				sub_blu(t_frct *frct);
-void				reset_color(t_frct *frct);
-
-void				incr_iteration_num(t_frct *frct);
-void				decr_iteration_num(t_frct *frct);
-
-void				apply_on_pntarr(t_frct *frct, double n,
-		void (f)(t_point *, double));
-void				apply_on_pxlarr(t_frct *frct, int clr, int val,
-		void (f)(t_pixel *, int clr, int val));
-
-void				exit_frct(t_frct *frct);
-void				scrn_upd(t_frct *frct);
-
-t_frct_data			*get_frct_data();
-int					validate_params(int argc, char **argv);
-
-void				iterate_mandelbar(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
-void				iterate_mandelbrot(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
+/*
+** Different mappins of fractal.
+*/
+void				iterate_default(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
+void				iterate_tricorn(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
 void				iterate_julia(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
 void				iterate_perp_brot(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
 void				iterate_celtic_brot(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
@@ -203,5 +189,26 @@ void				iterate_perp_burn_ship(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
 void				iterate_buffalo(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
 void				iterate_celt_heart(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
 void				iterate_perp_buffalo(t_cmplx *z, t_cmplx z2, t_cmplx to_add);
+
+/*
+** Coloring. 
+*/
+int					get_pxl_clr_1(int max_iterations, int n);
+
+/*
+** Button hooks. 
+*/
+void				mov_up_key(t_frct *frct);
+void				mov_down_key(t_frct *frct);
+void				mov_left_key(t_frct *frct);
+void				mov_right_key(t_frct *frct);
+void				zoom_in_key(t_frct *frct);
+void				zoom_out_key(t_frct *frct);
+void				toggle_show_help(t_frct *frct);
+void				toggle_space(t_frct *frct);
+void				incr_iteration_num(t_frct *frct);
+void				decr_iteration_num(t_frct *frct);
+void				reset_frct(t_frct *frct);
+void				exit_frct(t_frct *frct);
 
 #endif

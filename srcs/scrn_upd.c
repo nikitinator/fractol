@@ -6,12 +6,12 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/06 20:43:29 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/26 19:08:11 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/02/28 21:18:16 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
-#include "stdio.h"//
+#include <stdio.h>
 
 //create small structure for this 
 static void	*calc_mndlbrt(void *param/**/)
@@ -29,7 +29,8 @@ static void	*calc_mndlbrt(void *param/**/)
 	frct->mov_coeff.re = frct->factor.re * ZOOM_COEFF;
 	frct->mov_coeff.im = frct->factor.im * ZOOM_COEFF;
 
-	thread = frct->thread++;
+	thread = frct->thread;
+	frct->thread += 1;
 	
 	pthread_cond_signal(&frct->th_cond);
 	y = frct->milestones[thread];
@@ -46,7 +47,7 @@ static void	*calc_mndlbrt(void *param/**/)
 				SET_PIX(x, y, (&frct->img), 
 						frct->get_pxl_clr(frct->max_iterations, n));
 			else
-				SET_PIX(x, y, (&frct->img), 0); 
+				SET_PIX(x, y, (&frct->img), 0x00000000);
 			x++;
 		}
 		c.im += frct->factor.im;
@@ -61,23 +62,19 @@ void		draw_mandelbrot(t_frct *frct)
 	pthread_t		th_id[THREADS];
 	pthread_mutex_t	mutex;
 	
-	//ft_bzero(frct->img.arr, IMG_HEIGHT * frct->img.size_line);
 	pthread_mutex_init(&mutex, NULL);
 	pthread_cond_init(&frct->th_cond, NULL);
-	i = 0;
+	i = -1;
 	frct->thread = 0;
-	while(i < THREADS)
+	while(++i < THREADS)
 	{
 		pthread_create(&th_id[i], NULL, calc_mndlbrt, frct);
-		i++;
-		pthread_cond_wait(&frct->th_cond, &mutex);
+		if (i != frct->thread)
+			pthread_cond_wait(&frct->th_cond, &mutex);
 	}
-	i = 0;
-	while(i < THREADS)
-	{
+	i = -1;
+	while(++i < THREADS)
 		pthread_join(th_id[i], NULL);
-		i++;
-	}
 	mlx_put_image_to_window(frct->mlx, frct->win, frct->img.pnt_img, 0, 0);
 	return ;
 }

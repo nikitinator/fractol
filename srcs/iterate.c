@@ -6,19 +6,19 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/21 14:07:56 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/26 19:09:56 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/02/26 20:43:09 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 
-void	iterate_mandelbrot(t_cmplx *z, t_cmplx z2, t_cmplx to_add)
+void	iterate_default(t_cmplx *z, t_cmplx z2, t_cmplx to_add)
 {
 	z->im = 2 * z->re * z->im + to_add.im; //c.im;
 	z->re = z2.re - z2.im + to_add.re;//c.re;
 }
 
-void	iterate_mandelbar(t_cmplx *z, t_cmplx z2, t_cmplx to_add)
+void	iterate_tricorn(t_cmplx *z, t_cmplx z2, t_cmplx to_add)
 {
 	z->im = -2 * z->re * z->im + to_add.im; //c.im;
 	z->re = z2.re - z2.im + to_add.re;//c.re;
