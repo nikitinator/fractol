@@ -6,81 +6,93 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/06 20:43:29 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/28 21:18:16 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/03/07 22:35:24 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+#include "fractol.h" 
 #include <stdio.h>
 
-//create small structure for this 
-static void	*calc_mndlbrt(void *param/**/)
+static void	print_help(t_frct *frct)
 {
-	t_frct *frct;
-	int		thread;
+	mlx_string_put(frct->mlx, frct->win, 5, 20, WHITE, HELP_1);
+	mlx_string_put(frct->mlx, frct->win, 5, 35, WHITE, HELP_2);
+	mlx_string_put(frct->mlx, frct->win, 5, 50, WHITE, HELP_3);
+	mlx_string_put(frct->mlx, frct->win, 5, 65, WHITE, HELP_4);
+	mlx_string_put(frct->mlx, frct->win, 5, 80, WHITE, HELP_5);
+	mlx_string_put(frct->mlx, frct->win, 5, 95, WHITE, HELP_6);
+	mlx_string_put(frct->mlx, frct->win, 5, 110, WHITE, HELP_7);
+	mlx_string_put(frct->mlx, frct->win, 5, 125, WHITE, HELP_8);
+	mlx_string_put(frct->mlx, frct->win, 5, 140, WHITE, HELP_9);
+	mlx_string_put(frct->mlx, frct->win, 5, 155, WHITE, HELP_10);
+	mlx_string_put(frct->mlx, frct->win, 5, 170, WHITE, HELP_11);
+	mlx_string_put(frct->mlx, frct->win, 5, 185, WHITE, HELP_12);
+	mlx_string_put(frct->mlx, frct->win, 5, 200, WHITE, HELP_13);
+	mlx_string_put(frct->mlx, frct->win, 5, 215, WHITE, HELP_14);
+	mlx_string_put(frct->mlx, frct->win, 5, 230, WHITE, HELP_15);
+	mlx_string_put(frct->mlx, frct->win, 5, 245, WHITE, HELP_16);
+	mlx_string_put(frct->mlx, frct->win, 5, 260, WHITE, HELP_17);
+}
+
+static void	set_pixel(short x, short y, int n_iter, t_frct *frct)
+{
+	if (n_iter < frct->max_iterations)
+		SET_PIX(x, y, (&frct->img),
+			frct->get_pxl_clr(frct->max_iterations, n_iter));
+	else
+		SET_PIX(x, y, (&frct->img), 0);
+}
+
+//create small structure for this 
+static void	*calc_frct(void *param/**/)
+{
+	t_thrd_inp *v;
 	t_cmplx c;
-	size_t	x;
-	size_t	y;
-	int		n;
+	short	x;
+	short	y;
 
-	frct = (t_frct *)param;
-	frct->factor.re = (frct->max.re - frct->min.re) / (IMG_WIDTH - 1);//
-	frct->factor.im = (frct->max.im - frct->min.im) / (IMG_HEIGHT - 1);//
-	frct->mov_coeff.re = frct->factor.re * ZOOM_COEFF;
-	frct->mov_coeff.im = frct->factor.im * ZOOM_COEFF;
-
-	thread = frct->thread;
-	frct->thread += 1;
-	
-	pthread_cond_signal(&frct->th_cond);
-	y = frct->milestones[thread];
-	c.im = frct->min.im + y * frct->factor.im;
-	while (y < frct->milestones[thread + 1])
+	v = (t_thrd_inp *)param;
+	y = v->from;
+	c.im = v->frct->min.im + y * v->frct->step.im;
+	while (y < v->to)
 	{
 		x = 0;
-		c.re = frct->min.re;
+		c.re = v->frct->min.re;
 		while (x < IMG_WIDTH)
 		{
-			c.re += frct->factor.re;
-			n = frct->get_iter(frct, c);
-			if (n < frct->max_iterations)
-				SET_PIX(x, y, (&frct->img), 
-						frct->get_pxl_clr(frct->max_iterations, n));
-			else
-				SET_PIX(x, y, (&frct->img), 0x00000000);
+			c.re += v->frct->step.re;
+			set_pixel(x, y, v->frct->get_iter(v->frct, c), v->frct);
 			x++;
 		}
-		c.im += frct->factor.im;
+		c.im += v->frct->step.im;
 		y++;
 	}
 	pthread_exit(0);	
 }
 
-void		draw_mandelbrot(t_frct *frct)
+void		draw_frct(t_frct *frct)
 {
 	int				i;
-	pthread_t		th_id[THREADS];
-	pthread_mutex_t	mutex;
+	pthread_t		th_id[THREAD_NUM];
 	
-	pthread_mutex_init(&mutex, NULL);
-	pthread_cond_init(&frct->th_cond, NULL);
+	frct->step.re = frct->range.re / (IMG_WIDTH - 1);//
+	frct->step.im = frct->range.im / (IMG_HEIGHT - 1);//
+	frct->mov_coeff.re = frct->step.re * ZOOM_COEFF;
+	frct->mov_coeff.im = frct->step.im * ZOOM_COEFF;
+
 	i = -1;
-	frct->thread = 0;
-	while(++i < THREADS)
-	{
-		pthread_create(&th_id[i], NULL, calc_mndlbrt, frct);
-		if (i != frct->thread)
-			pthread_cond_wait(&frct->th_cond, &mutex);
-	}
+	while(++i < THREAD_NUM)
+		pthread_create(&th_id[i], NULL, calc_frct, &frct->mlst[i]);
 	i = -1;
-	while(++i < THREADS)
+	while(++i < THREAD_NUM)
 		pthread_join(th_id[i], NULL);
 	mlx_put_image_to_window(frct->mlx, frct->win, frct->img.pnt_img, 0, 0);
-	return ;
 }
 
 void		scrn_upd(t_frct *frct)
 {
-	draw_mandelbrot(frct);
-	//draw_julia(frct);
+	draw_frct(frct);
+	mlx_string_put(frct->mlx, frct->win, 15, 0, WHITE, "f1 - help");
+	if (frct->show_help)
+		print_help(frct);
 }

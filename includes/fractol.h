@@ -6,7 +6,7 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 18:22:38 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/28 21:52:37 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/03/07 21:59:58 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,12 @@
 # include "mlx.h"
 # include "libft.h"
 
+# include <stdio.h>
+
 # include <sys/types.h>
 # include <pthread.h>
 
-# define THREAD_NUM 4 
+# define THREAD_NUM 16
 
 # define X 0
 # define Y 1
@@ -40,14 +42,20 @@
 # define IMG_WIDTH 1000
 # define IMG_HEIGHT 800
 
-# define ZOOM_COEFF 25 
-# define NUM_OF_BTNS 11
+# define MAX_ITER_DEFAULT 50
+
+//
+# define ZOOM_COEFF 25
+//
+
+# define NUM_OF_BTNS 12
 # define NUM_OF_VARIATIONS 12
 
-# define DFLT_MAX_RE  1.2
-# define DFLT_MIN_RE -1.2
-# define DFLT_MAX_IM  1.0	
-# define DFLT_MIN_IM -1.0
+
+# define DEFAULT_MAX_RE  1.2
+# define DEFAULT_MIN_RE -1.2
+# define DEFAULT_MAX_IM  1.0	
+# define DEFAULT_MIN_IM -1.0
 
 # define BUT_8 91
 # define BUT_4 86
@@ -75,6 +83,25 @@
 # define BUT_BIGG 47
 # define BUT_LESS 43
 # define BUT_SPACE 49
+# define BUT_F1 122
+
+# define HELP_1  "              +"
+# define HELP_2  "       space  |  julia constant value change with mouse"
+# define HELP_3  "              |"
+# define HELP_4  "         esc  |  exit"
+# define HELP_5  "              |"
+# define HELP_6  "           r  |  reset"
+# define HELP_7  "              |"
+# define HELP_8  "      arrows  |  move"
+# define HELP_9  "              |"
+# define HELP_10 " mouse wheel  |  zoom"
+# define HELP_11 "              |"
+# define HELP_12 "         + -  |  zoom"
+# define HELP_13 "              |"
+# define HELP_14 "         < >  |  change iteration number"
+# define HELP_15 "              |"
+# define HELP_16 "       0 - 9  |  change color palette"
+# define HELP_17 "              +"
 
 # define WHITE 0x00FFFFFF
 
@@ -135,9 +162,9 @@ typedef struct		s_frct
 	int				(*get_iter)(struct s_frct *frct, t_cmplx c);//
 	int				(*get_pxl_clr)(int max_iterations, int n);//
 
-	t_cmplx			factor;//
+	t_cmplx			step;//
 	int				thread;
-
+	struct s_thrd_inp		*mlst;
 	pthread_cond_t	th_cond;
 }					t_frct;
 
@@ -150,10 +177,13 @@ typedef struct		s_func_key_hook
 typedef struct		s_thrd_inp
 {
 	t_frct			*frct;
-	int				borders[2];
+	int				from;
+	int				to;
+	t_cmplx			step;
 }					t_thrd_inp;
 
 void				init_frct(t_frct *frct, int	index_frct, int index_iter);
+void				set_milestones(t_thrd_inp *milestones, t_frct *frct);
 int					validate_params(int argc, char **argv);
 void				scrn_upd(t_frct *frct);
 void				print_usage(void);

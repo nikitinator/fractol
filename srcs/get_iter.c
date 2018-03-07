@@ -6,7 +6,7 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 18:29:29 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/27 17:36:37 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/03/07 21:48:43 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 int		get_itr_mandelbrot(t_frct *frct, t_cmplx c)
 {
 	int	n;
-
 	t_cmplx z;
 	t_cmplx z2;
 
@@ -36,12 +35,9 @@ int		get_itr_mandelbrot(t_frct *frct, t_cmplx c)
 	return (n);
 }
 
-#include <stdio.h>
-
 int		get_itr_julia(t_frct *frct, t_cmplx c)
 {
 	int	n;
-
 	t_cmplx z;
 	t_cmplx z2;
 	t_cmplx jul_const;

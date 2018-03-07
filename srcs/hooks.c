@@ -6,7 +6,7 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/28 15:21:28 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/28 21:19:56 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/03/07 22:12:31 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,26 +26,27 @@ int		handle_key(int keycode, t_frct *frct)
 		{BUT_BIGG, incr_iteration_num},
 		{BUT_LESS, decr_iteration_num},
 		{BUT_SPACE, toggle_space},
-		{BUT_R, reset_frct}
+		{BUT_R, reset_frct},
+		{BUT_F1, toggle_show_help}
 		};
 
 	i = 0;
 	while (i < NUM_OF_BTNS && func[i].key != keycode)
 		i++;
 	if (i < NUM_OF_BTNS)
+	{
 		func[i].f(frct);
-	scrn_upd(frct);
+		scrn_upd(frct);
+	}
 	return (0);
 }
 
-static t_cmplx	get_cmplx(t_frct *frct, int x, int y)
+static t_cmplx	get_cmplx(int x, int y, t_cmplx range, t_cmplx min)
 {
 	t_cmplx	coord;
 
-	coord.re = (double)x / (IMG_WIDTH - 1) *
-		(frct->max.re - frct->min.re) + frct->min.re;
-	coord.im = (double)y / (IMG_HEIGHT - 1) *
-			(frct->max.im - frct->min.im) + frct->min.im;
+	coord.re = (double)x / (IMG_WIDTH - 1) * range.re + min.re;
+	coord.im = (double)y / (IMG_HEIGHT - 1) * range.im + min.im;
 	return (coord);
 }
 
@@ -54,20 +55,21 @@ int		mouse_zoom(int key, int x, int y, t_frct *frct)
 	t_cmplx	mouse;
 	t_cmplx	ratio;
 
-	mouse = get_cmplx(frct, x, y);	
-	ratio.re = 1.0 / IMG_WIDTH  * (float)x;	
-	ratio.im = 1.0 / IMG_HEIGHT * (float)y;  	
+	mouse = get_cmplx(x, y, frct->range, frct->min);	
 	if (key == 1 || key == 4)
 	{
 		frct->range.re *= (1 - frct->zoom_coeff);
 		frct->range.im *= (1 - frct->zoom_coeff);
-		
 	}
 	else if (key == 2 || key == 5)
 	{
 		frct->range.re *= (1 + frct->zoom_coeff);
 		frct->range.im *= (1 + frct->zoom_coeff);
 	}
+	else
+		return (0);
+	ratio.re = (float)x / IMG_WIDTH;	
+	ratio.im = (float)y / IMG_HEIGHT;  	
 	frct->min.re = mouse.re - frct->range.re * ratio.re;
 	frct->max.re = mouse.re + frct->range.re * (1 - ratio.re);
 	frct->min.im = mouse.im - frct->range.im * ratio.im;
@@ -80,7 +82,7 @@ int		mouse_trace(int x, int y, t_frct *frct)
 {
 	if (frct->space_pressed)
 	{
-		frct->julia_const = get_cmplx(frct, x, y);
+		frct->julia_const = get_cmplx(x, y, frct->range, frct->min);
 		scrn_upd(frct);
 	}
 	return (0);

@@ -6,11 +6,30 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 19:42:54 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/28 21:59:49 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/03/07 21:40:12 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <fractol.h>
+
+void		set_milestones(t_thrd_inp *milestones, t_frct *frct)
+{
+	int		i;
+
+	frct->mlst = milestones;
+	if (THREAD_NUM > 0)
+	{
+		i = 0;
+		while (i < THREAD_NUM)
+		{
+			milestones[i].frct = frct;
+			milestones[i].from = IMG_HEIGHT / THREAD_NUM * i;//
+			milestones[i].to =	IMG_HEIGHT / THREAD_NUM * (i + 1);//h
+			i++;
+		}
+		milestones[THREAD_NUM - 1].to = IMG_HEIGHT;
+	}
+}
 
 void	init_frct_img(t_img *img, void *mlx_ptr)
 {
@@ -23,47 +42,20 @@ void	init_frct_img(t_img *img, void *mlx_ptr)
 	img->center[Y] = IMG_WIDTH / 2;
 }
 
-void		set_milestones(t_thrd_inp *milestones, t_frct *frct)
-{
-	int		i;
-
-	if (THREAD_NUM > 0)
-	{
-		i = -1;
-		while (i++ < THREAD_NUM)
-		{
-			milestones[i].frct = frct;
-			milestones[i].borders[FROM] = IMG_HEIGHT / THREADS * i;//
-			milestones[i].borders[TO] =	IMG_HEIGHT / THREADS * i + 1;//
-
-			frct->milestones[THREADS] = IMG_HEIGHT;
-		}
-	}
-}
-
 void	init_frct(t_frct *frct, int index_frct, int index_iter)
 {
 	t_frct_itr_data	*data_itr;
 
 	data_itr = get_frct_itr_data();
-	init_frct_img(&frct->img, frct->mlx);
-	frct->show_help = 0;
-	frct->min.re = DFLT_MIN_RE;
-	frct->max.re = DFLT_MAX_RE;
-	frct->min.im = DFLT_MAX_IM; 
-	frct->max.im = DFLT_MIN_IM; 
-	frct->range.im = frct->max.im - frct->min.im;
-	frct->range.re = frct->max.re - frct->min.re; 
-	frct->zoom_coeff = 0.1 ;
-	frct->mov_coeff.im = frct->range.im / 80;
-	frct->mov_coeff.re = frct->range.re / 80;
-	frct->max_iterations = 50;
-	frct->julia_const = (t_cmplx){0.0, 0.0};
 	frct->iter = data_itr[index_iter - 1].iter;
 	if (index_frct == 1)
 		frct->get_iter = get_itr_mandelbrot;
 	else if (index_frct == 2)
 		frct->get_iter = get_itr_julia;
+	init_frct_img(&frct->img, frct->mlx);
+	frct->show_help = 0;
+	reset_frct(frct);
+	frct->julia_const = (t_cmplx){0.0, 0.0};
 	frct->get_pxl_clr = get_pxl_clr_1;
-	set_milestones(frct);
+	//set_milestones(frct);
 }

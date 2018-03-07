@@ -6,7 +6,7 @@
 #    By: snikitin <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/07 17:36:11 by snikitin          #+#    #+#              #
-#    Updated: 2018/02/28 15:58:33 by snikitin         ###   ########.fr        #
+#    Updated: 2018/03/07 17:41:41 by snikitin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,6 +25,8 @@ SRC :=	main.c\
 		toggle.c\
 		change_iteration_num.c\
 		iterate.c\
+		iterate_2.c\
+		iterate_3.c\
 		validate_params.c\
 		get_iter.c\
 		get_pxl_clr.c\
@@ -39,7 +41,7 @@ OBJ = $(addprefix $(OBJ_DIR), $(SRC:.c=.o))
 INC = $(INC_DIR)fractol.h 
 
 LIBFT =			$(LIBFT_DIR)libft.a
-LIBFT_DIR :=    $(LIB_DIR)libft/
+LIBFT_DIR :=    $(LIB_DIR)libft
 LIBFT_INC :=    $(LIBFT_DIR)/
 LIBFT_FLAGS :=  -lft -L $(LIBFT_DIR)
 
@@ -48,7 +50,7 @@ MLX_DIR = $(LIB_DIR)mlx/
 MLX_INC = $(LIB_DIR)mlx/
 MLX_FLAGS = -lmlx -L $(MLX_INC) -framework OpenGl -framework AppKit
 
-CC_FLAGS := -Wall -Wextra -Werror -O3 
+CC_FLAGS := -Wall -Wextra -Werror -O3
 LINK_FLAGS := $(LIBFT_FLAGS) $(MLX_FLAGS) 
 HEADER_FLAGS := -I $(LIBFT_INC) -I $(MLX_DIR) -I $(INC_DIR)
 
