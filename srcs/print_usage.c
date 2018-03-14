@@ -6,7 +6,7 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 20:31:09 by snikitin          #+#    #+#             */
-/*   Updated: 2018/02/27 14:26:41 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/03/14 14:16:33 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,15 +34,14 @@ void	print_variations(char *frct_name, int frct_index,
 		ft_putchar(' ');
 		ft_putendl(data[i].name);
 	}
-	//ft_putendl("");
 }
 
 void	print_usage(void)
-{	
+{
 	t_frct_itr_data *data;
-	int		i;
-	int fractal_index;
-	
+	int				i;
+	int				fractal_index;
+
 	data = get_frct_itr_data();
 	fractal_index = 1;
 	i = -1;

@@ -6,7 +6,7 @@
 #    By: snikitin <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/07 17:36:11 by snikitin          #+#    #+#              #
-#    Updated: 2018/03/07 17:41:41 by snikitin         ###   ########.fr        #
+#    Updated: 2018/03/14 14:26:03 by snikitin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,8 @@ SRC :=	main.c\
 		print_usage.c\
 		reset_frct.c\
 		get_data.c\
-		hooks.c
+		hooks.c\
+		set_color.c
 		
 OBJ = $(addprefix $(OBJ_DIR), $(SRC:.c=.o))
 

@@ -6,54 +6,31 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 18:29:29 by snikitin          #+#    #+#             */
-/*   Updated: 2018/03/07 21:48:43 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/03/14 14:28:16 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 
-//senya will be dissapointed
-
-int		get_itr_mandelbrot(t_frct *frct, t_cmplx c)
+t_break	get_itr(t_cmplx (*iter)(t_cmplx z, t_cmplx z2, t_cmplx to_add),
+		t_cmplx c, short max_iterations, t_cmplx to_add)
 {
-	int	n;
+	t_break point;
 	t_cmplx z;
-	t_cmplx z2;
 
 	z.re = c.re;
 	z.im = c.im;
-	n = 0;
-	while(n < frct->max_iterations)
+	point.iter = 0;
+	point.val.re = 0;
+	point.val.im = 0;
+	while(point.iter < max_iterations)
 	{
-		z2.re = z.re * z.re;
-		z2.im = z.im * z.im;
-		if (z2.re + z2.im > 4)
-			break;
-				n++;
-		(*frct->iter)(&z, z2, c);
+		point.val.re = z.re * z.re;
+		point.val.im = z.im * z.im;
+		if (point.val.re + point.val.im > 4)
+			return(point);
+		point.iter++;
+		z = (*iter)(z, point.val, to_add);
 	}
-	return (n);
-}
-
-int		get_itr_julia(t_frct *frct, t_cmplx c)
-{
-	int	n;
-	t_cmplx z;
-	t_cmplx z2;
-	t_cmplx jul_const;
-
-	jul_const = frct->julia_const;
-	z.re = c.re;
-	z.im = c.im;
-	n = 0;
-	while(n < frct->max_iterations)
-	{
-		z2.re = z.re * z.re;
-		z2.im = z.im * z.im;
-		if (z2.re + z2.im > 4)
-			break;
-				n++;
-		(*frct->iter)(&z, z2, jul_const);
-	}
-	return (n);
+	return (point);
 }
