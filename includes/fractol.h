@@ -6,7 +6,7 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 18:22:38 by snikitin          #+#    #+#             */
-/*   Updated: 2018/03/14 15:19:55 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/03/14 16:30:48 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,7 +161,7 @@ typedef struct		s_thrd_inpt
 }					t_thrd_inpt;
 
 /*
-** Main routine. 
+** Main routine.
 */
 void				init_frct(t_frct *frct, int	index_frct, int index_iter);
 void				set_milestones(t_thrd_inpt *milestones, t_frct *frct);
