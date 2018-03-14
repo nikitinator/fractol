@@ -6,7 +6,7 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 13:32:09 by snikitin          #+#    #+#             */
-/*   Updated: 2018/03/14 14:43:51 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/03/14 18:28:29 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,15 +40,16 @@ int		main(int argc, char **argv)
 
 	if (argc > 1 && !validate_params(argc, argv))
 	{
-		i = 0;
-		while (++i < argc - 1 && ((ppid = fork()) == 0))
+		if (argc == 2)
+			launch_fractal_instance(ft_atoi(argv[1]) / 100,
+					ft_atoi(argv[1]) % 100);
+		else
 		{
-			launch_fractal_instance(ft_atoi(argv[i]) / 100,
-					ft_atoi(argv[i]) % 100);
-			return (0);
+			i = 1;
+			while (i < argc - 1 && ((ppid = fork())))
+				i++;
+			execve(argv[0], (char *[]){argv[0], argv[i], NULL}, NULL);
 		}
-		launch_fractal_instance(ft_atoi(argv[i]) / 100,
-					ft_atoi(argv[i]) % 100);
 		return (0);
 	}
 	print_usage();

@@ -6,7 +6,7 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 19:42:54 by snikitin          #+#    #+#             */
-/*   Updated: 2018/03/14 15:17:38 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/03/14 17:41:35 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ void		init_frct(t_frct *frct, int index_frct, int index_iter)
 	else if (index_frct == 2)
 		frct->is_julia = 1;
 	init_frct_img(&frct->img, frct->mlx);
+	frct->space_pressed = 0;
 	frct->show_help = 0;
 	reset_frct(frct);
 	frct->julia_const = (t_cmplx){0.0, 0.0};
