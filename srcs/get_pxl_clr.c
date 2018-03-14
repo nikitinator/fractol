@@ -6,7 +6,7 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/26 18:33:14 by snikitin          #+#    #+#             */
-/*   Updated: 2018/03/14 14:15:08 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/03/14 15:09:07 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,5 +58,6 @@ int			get_pxl_clr_3(int max_iterations, t_break p)
 	nn = n - clr.c_8[B] * 255 * 255;
 	clr.c_8[R] = nn / 255;
 	clr.c_8[G] = nn - clr.c_8[R] * 255;
+	clr.c_8[T] = 0;
 	return (clr.c_32);
 }

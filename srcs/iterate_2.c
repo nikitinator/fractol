@@ -6,7 +6,7 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/07 17:35:23 by snikitin          #+#    #+#             */
-/*   Updated: 2018/03/14 14:39:48 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/03/14 15:12:15 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ t_cmplx	iterate_heart_brot(t_cmplx z, t_cmplx z2, t_cmplx to_add)
 			z2.re - z2.im + to_add.re});
 }
 
-t_cmplx	iterate_perp_burn_ship(t_cmplx z, t_cmplx z2, t_cmplx to_add)
+t_cmplx	iterate_perp_brn_shp(t_cmplx z, t_cmplx z2, t_cmplx to_add)
 {
 	return ((t_cmplx){-2 * z.re * fabsl(z.im) + to_add.im,
 			z2.re - z2.im + to_add.re});
