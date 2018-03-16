@@ -6,7 +6,7 @@
 /*   By: snikitin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/06 20:43:29 by snikitin          #+#    #+#             */
-/*   Updated: 2018/03/14 14:29:54 by snikitin         ###   ########.fr       */
+/*   Updated: 2018/03/16 19:02:54 by snikitin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ static void	print_help(t_frct *frct)
 	mlx_string_put(frct->mlx, frct->win, 5, 200, WHITE, HELP_13);
 	mlx_string_put(frct->mlx, frct->win, 5, 215, WHITE, HELP_14);
 	mlx_string_put(frct->mlx, frct->win, 5, 230, WHITE, HELP_15);
+	mlx_string_put(frct->mlx, frct->win, 5, 245, WHITE, HELP_16);
+	mlx_string_put(frct->mlx, frct->win, 5, 260, WHITE, HELP_17);
 }
 
 static void	set_pixel(short x, short y, t_break p, t_frct *frct)
